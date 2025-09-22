@@ -1,0 +1,38 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "height": 600,
+    "width": 1200,
+    "title": {
+        "text": "Top Spotify Songs Around The World",
+        "fontSize": 20
+    },
+    "data": {
+        "url": "data/ne_110m_admin_0_countries.json",
+        "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+    },
+    "transform": [
+        {
+            "lookup": "properties.ISO_A2",
+            "from": {
+                "data": {"url": "data/small_universal_top_spotify_songs.csv"},
+                "key": "country",
+                "fields": ["country", "popularity"]
+            }
+        },
+        {
+            "calculate": "datum.popularity == null ? 0 : datum.popularity", "as": "Current Popularity"
+        }
+    ],
+    "mark": {"type": "geoshape"},
+    "encoding": {
+        "color": {
+            "field": "Current Popularity",
+            "type": "quantitative",
+            "scale": {"scheme": "blues"}
+        },
+        "tooltip": [
+            {"field": "country", "type": "nominal"},
+            {"field": "Current Popularity", "type": "quantitative"}
+        ]
+    }
+}
